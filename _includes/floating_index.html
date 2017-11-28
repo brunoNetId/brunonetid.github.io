@@ -1,0 +1,46 @@
+
+
+<!-- <script>
+var navbar = document.getElementById("indexsidebar");
+var sticky = navbar.offsetTop;
+
+window.onscroll = function() {
+    document.getElementById("indexsidebar").style.marginTop = window.pageYOffset <= 147 ? 147 : window.pageYOffset;
+}
+
+</script> -->
+  <!-- <div class="indexsidebar-fill"/> -->
+
+<script>
+function myFunction() {
+    var x = document.getElementById("post-contents");
+    if (x.style.display === "none") {
+        x.style.display = "none";
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+</script>
+
+<button class="index-switch" onclick="myFunction()" float="right"> Contents </button>
+<br/>
+
+<!-- <div id="myDIV">
+  This is my DIV element.
+</div> -->
+  <div class="indexsidebar" id="post-contents">
+
+    <!-- <h2>Contents</h2> -->
+    <ol>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#about-prometheus">About Prometheus</a></li>
+      <li><a href="#to-do-overview">To-Do overview</a></li>
+      <li><a href="#scraping-data">Scraping data</a></li>
+      <li><a href="#the-application">The application</a></li>
+      <li><a href="#enabling-prometheus">Enabling Prometheus</a></li>
+      <li><a href="#enabling-grafana">Enabling Grafana</a></li>
+      <li><a href="#final-words">Final words</a></li>
+    </ol>
+       
+  </div>

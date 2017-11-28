@@ -1,0 +1,89 @@
+
+
+.profilesidebar-box {
+	position: sticky;
+	top: 0;
+	width: 100%;
+
+@media only screen and (max-width: 1026px) {
+     //{
+        display: none;
+    //}
+}
+
+}
+
+.profilesidebar {
+
+    position: absolute;
+    //position: sticky;
+    //top: 0; // required as well.
+
+
+//display: inline-block;
+//vertical-align: middle;
+//float: left;
+
+    //border: 10px solid gray;
+    //float: right;
+    width: 10%;
+    padding-left: 3%;
+    padding-top: 3%;
+
+    //position: fixed;
+
+    //.p {
+    	font-size: 60%;
+    //}
+//    color: blue;
+//    border-color: coral;
+//    border-width: 20px;
+}
+
+.index-switch {
+
+	z-index: 1;
+    float: right;
+    //width: 16%;
+    //padding-left: 2%;
+
+//    	font-size: 1.0vw;
+
+    position: sticky;
+    top: 0;
+
+}
+
+
+.indexsidebar {
+	//style {
+			display: none;
+	//	}
+    border: 1px solid gray;
+      background-color: white;
+
+    //position: fixed;
+    //right: 1em;
+
+    float: right;
+    //width: 16%;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: 3%;
+
+    //position: fixed;
+
+    //.p {
+    	font-size: 8;
+    //}
+//      color: blue;
+//    border-color: coral;
+//    border-width: 20px;
+
+    //flex-grow: 1;
+    //overflow: auto;
+
+    position: sticky;
+    //right: 1;
+    top: 0; // required as well.
+}
