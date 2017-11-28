@@ -46,7 +46,7 @@ theme_settings:
   youtube:
 
   # Scripts
-  google_analytics: # Tracking ID, e.g. "UA-000000-01"
+  google_analytics: UA-110316900-1
   disqus_shortname: brunonetid-github-io
   katex: true # Enable if using math markup
   # search: true
