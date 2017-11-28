@@ -1,6 +1,6 @@
 # SITE CONFIGURATION
 baseurl: ""
-url: "https://blog.brunomeseguer.github.io"
+url: "https://brunomeseguer.github.io"
 
 # THEME-SPECIFIC CONFIGURATION
 theme_settings:
