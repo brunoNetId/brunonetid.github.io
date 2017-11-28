@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Monitoring Camel with Prometheus in OpenShift
+title: Monitoring Camel with Prometheus in Red Hat OpenShift
 feature-img: "assets/img/pexels/monitoring-camel-blured2.jpeg"
-tags: [Camel, FIS, Fuse, Fabric8, Prometheus, Grafana, Kubernetes, OpenShift]
+tags: [Camel, FIS, Fuse, Fabric8, Prometheus, Grafana, Kubernetes, OpenShift, Docker]
 ---
 
 
-This walk-through example will encourage you to build an *Apache Camel* application from scratch, deploy it in a *Kubernetes* environment, gather metrics using *Prometheus* and display them in *Grafana*. Monitoring will automatically adjust when the system scales up or down.
+This walk-through example will encourage you to build an [*Apache Camel*](http://camel.apache.org/) application from scratch, deploy it in a [*Kubernetes*](https://kubernetes.io/) environment, gather metrics using [*Prometheus*](https://prometheus.io/) and display them in [*Grafana*](https://grafana.com/). Monitoring will automatically adjust when the system scales up or down.
 
 
 ## Table of Contents
@@ -23,7 +23,7 @@ This walk-through example will encourage you to build an *Apache Camel* applicat
 
 ## Introduction
 
-*Apache Camel* tends to be a favorite choice when it comes to implement a mesh of coordinated applications resolving protocol/data mediations and service orchestrations. Instead of a complex monolithic solution, the preference is to deploy a number of smaller and simpler applications, it favors overall maintenance despite the increase in number of systems to observe.
+[*Apache Camel*](http://camel.apache.org/) tends to be a favorite choice when it comes to implement a mesh of coordinated applications resolving protocol/data mediations and service orchestrations. Instead of a complex monolithic solution, the preference is to deploy a number of smaller and simpler applications, it favors overall maintenance despite the increase in number of systems to observe.
 
 ![Camel Mesh]({{ site.baseurl }}/assets/img/posts/arch-mesh.png)
 
@@ -35,18 +35,18 @@ With traditional monitoring products, machines and VMs are assigned to run appli
 
 ![Ephemeral instances]({{ site.baseurl }}/assets/img/posts/bubbles.png)
 
-Of course, by running dynamic environments we gain agility that allows easy scaling, provides elasticity, but then keeping track of what runs where becomes challenging. Here we discuss how *Prometheus* and *Grafana* can help you monitor your *Camel* applications running in a container based based environment (*Kubernetes*).
+Of course, by running dynamic environments we gain agility that allows easy scaling, provides elasticity, but then keeping track of what runs where becomes challenging. Here we discuss how [*Prometheus*](https://prometheus.io/) and [*Grafana*](https://grafana.com/) can help you monitor your [*Camel*](http://camel.apache.org/) applications running in a container based based environment ([*Kubernetes*](https://kubernetes.io/)).
 
 ## About Prometheus
 
-*Prometheus* is an open source monitoring and alerting toolkit which collects and stores time series data. Conveniently it understands *Kubernetes*'s API to discover services. The collected data can be intelligently organised and rendered using *Grafana*, an open analytics and monitoring platform that can plug to Prometheus.
+[*Prometheus*](https://prometheus.io/) is an open source monitoring and alerting toolkit which collects and stores time series data. Conveniently it understands [*Kubernetes*](https://kubernetes.io/)'s API to discover services. The collected data can be intelligently organised and rendered using [*Grafana*](https://grafana.com/), an open analytics and monitoring platform that can plug to Prometheus.
 The following diagram depicts a simplified view of its architecture.
 
 ![Prometheus Architecture]({{ site.baseurl }}/assets/img/posts/prom-arch.png)
 
-*Prometheus* prime strategy is to pull metrics from applications (although 'push' is also supported). Connectivity to endpoints can be statically configured or dynamically discovered. Data obtained from endpoints is stored so that historical information can be served to external clients, including monitoring tools such as *Grafana*. Alerting is supported, although left out of scope in this article.
+[*Prometheus*](https://prometheus.io/) prime strategy is to pull metrics from applications (although 'push' is also supported). Connectivity to endpoints can be statically configured or dynamically discovered. Data obtained from endpoints is stored so that historical information can be served to external clients, including monitoring tools such as [*Grafana*](https://grafana.com/). Alerting is supported, although left out of scope in this article.
 
-In a *Kubernetes* environment, track of available services is always maintained. Services could be served by one or multiple replicated instances, scaled up or down when necessary. Before *Prometheus* can pull data from the instances it needs to find where they are running. One of its supported service discovery mechanisms is *Kubernetes*' based, and by invoking its API it can pull all the details from *Kubernetes* and locate the targets to work with.
+In a [*Kubernetes*](https://kubernetes.io/) environment, track of available services is always maintained. Services could be served by one or multiple replicated instances, scaled up or down when necessary. Before [*Prometheus*](https://prometheus.io/) can pull data from the instances it needs to find where they are running. One of its supported service discovery mechanisms is [*Kubernetes*](https://kubernetes.io/)'s based, and by invoking its API it can pull all the details from [*Kubernetes*](https://kubernetes.io/) and locate the targets to work with.
 
 ![Prometheus Architecture]({{ site.baseurl }}/assets/img/posts/prom-arch-full.png)
 
@@ -56,27 +56,27 @@ In a *Kubernetes* environment, track of available services is always maintained.
 
 Let's pause for a second and quickly set the scene about our intentions, along with the simulated requirements:
 
- - We'll be using *Camel* to build our application (API service)
- - We'll be deploying in a *Kubernetes* based environment
+ - We'll be using [*Camel*](http://camel.apache.org/) to build our application (API service)
+ - We'll be deploying in a [*Kubernetes*](https://kubernetes.io/) based environment
  - We need to scale up and down to meet demand
  - We need to monitor both health and business metrics
  - We need a single pane of glass when graphing the data.
 
 All in all, the list below enumerates the building blocks to put together:
 
- - ![Tech Camel]({{ site.baseurl }}/assets/img/posts/tech-camel.png){:class="img-icon"} *Apache Camel* 
- - ![Tech Kube]({{ site.baseurl }}/assets/img/posts/tech-kubernetes.png){:class="img-icon"} *Kubernetes*
- - ![Tech Prom]({{ site.baseurl }}/assets/img/posts/tech-prometheus.png){:class="img-icon"} *Prometheus*
- - ![Tech Graf]({{ site.baseurl }}/assets/img/posts/tech-grafana.png){:class="img-icon"} *Grafana*
+ - ![Tech Camel]({{ site.baseurl }}/assets/img/posts/tech-camel.png){:class="img-icon"} [*Apache Camel*](http://camel.apache.org/) 
+ - ![Tech Kube]({{ site.baseurl }}/assets/img/posts/tech-kubernetes.png){:class="img-icon"} [*Kubernetes*](https://kubernetes.io/)
+ - ![Tech Prom]({{ site.baseurl }}/assets/img/posts/tech-prometheus.png){:class="img-icon"} [*Prometheus*](https://prometheus.io/)
+ - ![Tech Graf]({{ site.baseurl }}/assets/img/posts/tech-grafana.png){:class="img-icon"} [*Grafana*](https://grafana.com/)
 
-To model the *Camel* application (and for convenience), I'm selecting *Fuse Integration Services* (*FIS*), from Red Hat (where I work). And my *Kubernetes* environment of choice will be Red Hat *OpenShift*'s CDK, perfect for local development.
+To model the [*Camel*](http://camel.apache.org/) application (and for convenience), I'm selecting [*Fuse Integration Services* (*FIS*)](https://www.openshift.com/container-platform/middleware-services.html#integration), from [*Red Hat*](https://www.redhat.com) (where I work). And my [*Kubernetes*](https://kubernetes.io/) environment of choice will be [*Red Hat Container Development Kit (CDK)*](https://developers.redhat.com/products/cdk/overview/), perfect for local development.
 
 
 ## Scraping data
 
-It hasn't been mentioned yet how desirable it is to find a metrics extraction that minimises intrusion. *Prometheus* offers a JMX exporter to plug to any Java application (and hence to Camel). The performance impact on the application is negligible (nano-seconds), unless of course latency is considered a critical factor.
+It hasn't been mentioned yet how desirable it is to find a metrics extraction that minimises intrusion. [*Prometheus*](https://prometheus.io/) offers a JMX exporter to plug to any Java application (and hence to Camel). The performance impact on the application is negligible (nano-seconds), unless of course latency is considered a critical factor.
 
-> *Prometheus* offers a wide [range of exporters](https://prometheus.io/docs/instrumenting/exporters/#third-party-exporters), from hardware related ones, to databases and many more in between.
+> [*Prometheus*](https://prometheus.io/) offers a wide [range of exporters](https://prometheus.io/docs/instrumenting/exporters/#third-party-exporters), from hardware related ones, to databases and many more in between.
 
 <a/> <!-- blank line -->
 
@@ -87,20 +87,20 @@ The process of collecting metrics, in Prometheus's jargon, is *'scraping'*. The 
 ![Prometheus JMX Exporter]({{ site.baseurl }}/assets/img/posts/prom-jmx-scraping.png){:width="80%"}
 
 quick note:
-Out of curiosity, *Prometheus* will also help you obtaining metrics from hardware, network devices and other elements, it's open and not restricted to software only.
+Out of curiosity, [*Prometheus*](https://prometheus.io/) will also help you obtaining metrics from hardware, network devices and other elements, it's open and not restricted to software only.
 
-The *Camel* example to follow includes 3 layers (JVM, Camel, Business) of metrics to be scraped to illustrate typical information that be may relevant when monitoring. JVM and *Camel* metrics are available out-of-the-box, MBeans are already present to serve the information. Optionally we can extract business KPIs, thankfully *Camel* provides functionality to help in this matter, the `'camel-metrics'` component, shown later down the article.
+The [*Camel*](http://camel.apache.org/) example to follow includes 3 layers (JVM, Camel, Business) of metrics to be scraped to illustrate typical information that be may relevant when monitoring. JVM and [*Camel*](http://camel.apache.org/) metrics are available out-of-the-box, MBeans are already present to serve the information. Optionally we can extract business KPIs, thankfully [*Camel*](http://camel.apache.org/) provides functionality to help in this matter, the `'camel-metrics'` component, shown later down the article.
 
 ![Metrics extraction]({{ site.baseurl }}/assets/img/posts/metrics-extraction.png)
 
-The JMX Exporter has access to MBeans belonging to the 3 layers, and serves the information to *Prometheus* when requested via HTTP.
+The JMX Exporter has access to MBeans belonging to the 3 layers, and serves the information to [*Prometheus*](https://prometheus.io/) when requested via HTTP.
 
 Now that we know the principle of '*scraping*' and what parts are involved, we're ready to start implementing the solution...
 
 
 ## The application
 
-For demo purposes, we'll pretend the system exposes an API to provision VMs. A *Camel* micro-service will handle API calls where the required operating system, number of CPU cores, memory and storage are given to be provisioned.
+For demo purposes, we'll pretend the system exposes an API to provision VMs. A [*Camel*](http://camel.apache.org/) micro-service will handle API calls where the required operating system, number of CPU cores, memory and storage are given to be provisioned.
 
 ![Camel Application]({{ site.baseurl }}/assets/img/posts/camel-app.png){:width="80%"}
 
@@ -109,7 +109,7 @@ In the proposed use case, clients would select the VM options on screen and trig
 
 And this is the point from which we roll up our sleeves and get our hands dirty. Let's do it.
 
-Using FIS archetypes, let's create the base project:
+Using [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration) archetypes, let's create the base project:
 
 ```shell
 mvn org.apache.maven.plugins:maven-archetype-plugin:2.4:generate \
@@ -181,7 +181,7 @@ We define an XSLT on the client to help composing the XML request, randomly sele
 </xsl:stylesheet>
 ```
 
-Let's work now on the *Camel* Spring XML file:
+Let's work now on the [*Camel*](http://camel.apache.org/) Spring XML file:
 
 	scr/main/resources/spring/camel-context.xml
 
@@ -197,7 +197,7 @@ We now make use of Camel's functionality to define the bean holding the custom b
 </bean>
 ```
 
-Replace the main *Camel* route with the one below exposing the API, defined as:
+Replace the main [*Camel*](http://camel.apache.org/) route with the one below exposing the API, defined as:
 
 ```xml
 <route id="api-vm" routePolicyRef="policy">
@@ -259,7 +259,7 @@ Run `'jconsole'` and connect the local process. Display the MBeans and you shoul
 
 ### Including the JMX Exporter
 
-The *Camel* service is now built, we now need to ensure the JMX exporter runs with it. The exporter is a separate entity (JAR file), nothing to do with our service implementation. It can be configured to filter metrics in/out (provided a YAML file).
+The [*Camel*](http://camel.apache.org/) service is now built, we now need to ensure the JMX exporter runs with it. The exporter is a separate entity (JAR file), nothing to do with our service implementation. It can be configured to filter metrics in/out (provided a YAML file).
 
 However, given the target environment is OpenShift, the container needs to include both the application and the JMX exporter (and its configuration). We therefore amend the project to include some extra elements to automate the process of producing an all-in-one container as below described:
 
@@ -291,9 +291,9 @@ Maven will find the exporter by defining the dependency (plugin) in the POM file
   </executions>
 </plugin>
 ```
-We purposefully define the '`docker`' target directory, it will ensure *Fabric8* includes the exporter in the container to deploy in *OpenShift*.
+We purposefully define the '`docker`' target directory, it will ensure [*Fabric8*](https://fabric8.io/) includes the exporter in the container to deploy in [*Red Hat OpenShift*](https://www.openshift.com/).
 
-We also need to ensure the exporter's YAML configuration is injected. In the POM file we define where in the docker container to place the config file:
+We also need to ensure the exporter's YAML configuration is injected. In the POM file we define where in the [*Docker*](https://www.docker.com/) container to place the config file:
 
 ```xml
 <plugin>
@@ -354,11 +354,11 @@ Having included all the above, re-package the project using `maven` and launch a
 
 	java -javaagent:target/docker/api-vm-provider/1.0.0/build/maven/agent/jmx_prometheus_javaagent-0.10.jar=9779:target/docker/api-vm-provider/1.0.0/build/maven/agent/config.yml -jar target/api-vm-provider-1.0.0.jar
 
-The JMX exporter will open port 9779 (default *Prometheus* port), and use the YAML configuration file to expose the metrics. To confirm the exporter is active, open a browser and hit the following URL
+The JMX exporter will open port 9779 (default [*Prometheus*](https://prometheus.io/) port), and use the YAML configuration file to expose the metrics. To confirm the exporter is active, open a browser and hit the following URL
 
 	http://localhost:9779
 
-The above simulates a scraping request, as if *Prometheus* attempted to pull data from the *Camel* application. The browser should render on screen a list of metrics in return, similar to: 
+The above simulates a scraping request, as if [*Prometheus*](https://prometheus.io/) attempted to pull data from the [*Camel*](http://camel.apache.org/) application. The browser should render on screen a list of metrics in return, similar to: 
 
 ![Exporter setup]({{ site.baseurl }}/assets/img/posts/prom-scrape-local.png){:width="80%"}
 
@@ -412,13 +412,13 @@ spec:
 
 ### Deploying in OpenShift's CDK
 
-Now the *Camel* application is ready to be containerised and deployed in OpenShift. FIS will do all of it automatically for you in a single command. The directives to bundle together the application and exporter have already been defined. *Fabric8* (in *FIS*) will build a Docker image and include *OpenShift* resource descriptors. The graph below illustrates how the pieces are put together, streamed, and deployed in the target environment.
+Now the [*Camel*](http://camel.apache.org/) application is ready to be containerised and deployed in OpenShift. [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration) will do all of it automatically for you in a single command. The directives to bundle together the application and exporter have already been defined. [*Fabric8*](https://fabric8.io/) (in [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration)) will build a [*Docker*](https://www.docker.com/) image and include *OpenShift* resource descriptors. The graph below illustrates how the pieces are put together, streamed, and deployed in the target environment.
 
 ![JConsole MBeans]({{ site.baseurl }}/assets/img/posts/exporter-deploy.png)
 
-Reaching this stage, ensure you have your *OpenShift* environment up and running ready to be used. the *OpenShift* client (`oc`) should also be ready, pointing and logged-in to the CDK. 
+Reaching this stage, ensure you have your [*Red Hat OpenShift*](https://www.openshift.com/) environment up and running ready to be used. the *OpenShift* client (`oc`) should also be ready, pointing and logged-in to the CDK. 
 
-Create a new project (namespace) in *OpenShift* where to deploy our project.
+Create a new project (namespace) in [*Red Hat OpenShift*](https://www.openshift.com/) where to deploy our project.
 
 	oc new-project mydemo
 
@@ -447,7 +447,7 @@ The application should be returning the metrics, as it did when tested locally.
 
 ## Enabling Prometheus
 
-It is time to deploy *Prometheus* in our environment. This is a simple process since a docker image is available. We will customise the image by attaching our own *Prometheus* configuration file.
+It is time to deploy [*Prometheus*](https://prometheus.io/) in our environment. This is a simple process since a [*Docker*](https://www.docker.com/) image is available. We will customise the image by attaching our own [*Prometheus*](https://prometheus.io/) configuration file.
 
 Create a `Dockerfile` with the following code inside:
 
@@ -456,7 +456,7 @@ FROM prom/prometheus
 ADD prometheus.yml /etc/prometheus/
 ```
 
-The content above pulls the *Prometheus* image and installs a configuration file under `/etc`
+The content above pulls the [*Prometheus*](https://prometheus.io/) image and installs a configuration file under `/etc`
 
 Now, under the same `Dockerfile` directory, create a `prometheus.yml` file and add the following: 
 
@@ -486,14 +486,14 @@ scrape_configs:
 We're keeping a very simple configuration file for this demo. Obviously Prometheus's list of parameters is very extensive to customise accordingly. The above settings aim to:
 
  - increase the scraping frequency to trigger every 15 seconds
- - enable *Kubernetes* endpoints discovery
- - discard endpoints other than the *Camel* ones
+ - enable [*Kubernetes*](https://kubernetes.io/) endpoints discovery
+ - discard endpoints other than the [*Camel*](http://camel.apache.org/) ones
 
-The *Kubernetes* discovery setting will allow *Prometheus* to query and obtain the list of available endpoints and their connectivity details. *Prometheus* will include in its catalog all the endpoints retrieved to allow the scraping process to hit them, as the figure below illustrates: 
+The [*Kubernetes*](https://kubernetes.io/) discovery setting will allow [*Prometheus*](https://prometheus.io/) to query and obtain the list of available endpoints and their connectivity details. [*Prometheus*](https://prometheus.io/) will include in its catalog all the endpoints retrieved to allow the scraping process to hit them, as the figure below illustrates: 
 
 ![Openshift scraping]({{ site.baseurl }}/assets/img/posts/prom-scrape-os.png){:width="80%"}
 
-To initiate the deployment process in *OpenShift*, first we need to grant cluster permissions on the namespace to allow *Prometheus* to invoke *Kubernetes*'s API (when obtaining the endpoints). Execute the following commands to login as an admin and grant cluster permissions:
+To initiate the deployment process in [*Red Hat OpenShift*](https://www.openshift.com/), first we need to grant cluster permissions on the namespace to allow [*Prometheus*](https://prometheus.io/) to invoke [*Kubernetes*](https://kubernetes.io/)'s API (when obtaining the endpoints). Execute the following commands to login as an admin and grant cluster permissions:
 
 	oc login
 	oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:mydemo:default
@@ -503,12 +503,12 @@ Next, create and start a new prometheus build from the directory where the `Doce
 	oc new-build --binary --name=prometheus
 	oc start-build prometheus --from-dir=. --follow
 
-The first `start-build` execution takes long to complete, be patient. Once the build finished, create a new *Prometheus* application and expose it to allow external access to its administration console, as follows:
+The first `start-build` execution takes long to complete, be patient. Once the build finished, create a new [*Prometheus*](https://prometheus.io/) application and expose it to allow external access to its administration console, as follows:
 
 	oc new-app prometheus
 	oc expose service prometheus
 
-The new *Prometheus* pod should then be visible in the *OpenShift* console.
+The new [*Prometheus*](https://prometheus.io/) pod should then be visible in the [*Red Hat OpenShift*](https://www.openshift.com/) console.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/os-prometheus.png)
 
@@ -516,7 +516,7 @@ Open *Prometheus*'s administration console from the URL given (see URL in image 
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/prom-console-menu.png){:width="70%"}
 
-The UI will display the list of targets registered, the ones that we should see available are from our *Camel* application on port 9779. At this stage only one instance should be visible.
+The UI will display the list of targets registered, the ones that we should see available are from our [*Camel*](http://camel.apache.org/) application on port 9779. At this stage only one instance should be visible.
 
 ![Prometheus Targets]({{ site.baseurl }}/assets/img/posts/prom-console-targets.png)
 
@@ -526,7 +526,7 @@ We could therefore represent the current deployment picture as follows:
 
 Let's now scale up the application to simulate more demand, this is the big moment we were waiting for to see how our monitoring solution automatically reacts to changes in the environment.
 
-When scaling up from the Pod control in *OpenShift*, *Kubernetes* will kickoff a new pod. Shortly after, *Prometheus* will query again *Kubernetes* and will discover there's a new endpoint available, it will automatically pick it up and now will be scraping data from both pods. The following illustration should describe the new environment status when increasing the number of pods from 1 to 2.
+When scaling up from the Pod control in [*Red Hat OpenShift*](https://www.openshift.com/), [*Kubernetes*](https://kubernetes.io/) will kickoff a new pod. Shortly after, [*Prometheus*](https://prometheus.io/) will query again [*Kubernetes*](https://kubernetes.io/) and will discover there's a new endpoint available, it will automatically pick it up and now will be scraping data from both pods. The following illustration should describe the new environment status when increasing the number of pods from 1 to 2.
 
 
 ![Prometheus 2 Pods]({{ site.baseurl }}/assets/img/posts/monitor-pods-2.png){:width="100%"}
@@ -536,18 +536,18 @@ Refresh the targets list to see the new endpoint is visible.
 ![Prometheus targets 2]({{ site.baseurl }}/assets/img/posts/prom-console-targets-2.png)
 
 
-Note Prometheus's administration console includes a graph viewer useful for simple testing, but not rich enough for instance to display complex aggregated views. If you will, have a go and play around a bit, but we'll jump now straight to the following section, It's *Grafana* time!
+Note Prometheus's administration console includes a graph viewer useful for simple testing, but not rich enough for instance to display complex aggregated views. If you will, have a go and play around a bit, but we'll jump now straight to the following section, It's [*Grafana*](https://grafana.com/) time!
 
 
 ## Enabling *Grafana*
 
-*Grafana* is an open platform for analytics and monitoring capable of rendering very intuitive and interactive graphics out of multiple data sources, one of them being Prometheus. Our intention is therefore to plug *Grafana* to *Prometheus* to display our *Camel* application metrics. 
+[*Grafana*](https://grafana.com/) is an open platform for analytics and monitoring capable of rendering very intuitive and interactive graphics out of multiple data sources, one of them being Prometheus. Our intention is therefore to plug [*Grafana*](https://grafana.com/) to [*Prometheus*](https://prometheus.io/) to display our [*Camel*](http://camel.apache.org/) application metrics. 
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-arch.png){:width="100%"}
 
-To deploy an instance of *Grafana* in *OpenShift* I've taken as a base the demo prepared by the *OpenShift* team available (available [here](https://github.com/OpenShiftDemos/grafana-openshift)).
+To deploy an instance of [*Grafana*](https://grafana.com/) in [*Red Hat OpenShift*](https://www.openshift.com/) I've taken as a base the demo prepared by the *OpenShift* team available (available [here](https://github.com/OpenShiftDemos/grafana-openshift)).
 
-I've customised the example by updating to the latest *Grafana* version (4.4.1) and including a [Grafana plugin to render pie charts](https://grafana.com/plugins/grafana-piechart-panel) (not included by default). Download the plugin from *Grafana*'s [download link](https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.1.6/download) and unzip the contents in your local grafana working directoy (assuming you've created one), or alternatively use the commands below:
+I've customised the example by updating to the latest [*Grafana*](https://grafana.com/) version (4.4.1) and including a [Grafana plugin to render pie charts](https://grafana.com/plugins/grafana-piechart-panel) (not included by default). Download the plugin from [*Grafana*](https://grafana.com/)'s [download link](https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.1.6/download) and unzip the contents in your local grafana working directoy (assuming you've created one), or alternatively use the commands below:
 
 	mkdir grafana
 	cd grafana
@@ -590,7 +590,7 @@ WORKDIR /usr/share/grafana
 ENTRYPOINT ["./run.sh"]
 ```
 
-The above `Dockerfile` depends on two shell scripts to apply necessary fixes to enable 'write' permissions on the container to allow *Grafana* to use its local storage. Create the following two scripts (or copy them from the *OpenShift* example):
+The above `Dockerfile` depends on two shell scripts to apply necessary fixes to enable 'write' permissions on the container to allow [*Grafana*](https://grafana.com/) to use its local storage. Create the following two scripts (or copy them from the [*OpenShift* example](https://github.com/OpenShiftDemos/grafana-openshift)):
 
  - `run.sh`
  - `root/usr/bin/fix-permissions`
@@ -638,18 +638,18 @@ Remember to set 'execute' permissions on both scripts:
 	chmod +x root/usr/bin/fix-permissions 
 	chmod +x run.sh 
 
-All our *Grafana* deployment definitions are ready, let's deploy. 
-Create and start a new *Grafana* build from the same *Grafana* working directory (where '`Dockerfile`' is located).
+All our [*Grafana*](https://grafana.com/) deployment definitions are ready, let's deploy. 
+Create and start a new [*Grafana*](https://grafana.com/) build from the same *Grafana* working directory (where '`Dockerfile`' is located).
 
 	oc new-build --binary --name=grafana
 	oc start-build grafana --from-dir=. --follow
 
-The first `start-build` execution takes long to complete, be patient. Once the build finished, create a new *Grafana* application and expose it to allow external access to its administration console, as follows:
+The first `start-build` execution takes long to complete, be patient. Once the build finished, create a new [*Grafana*](https://grafana.com/) application and expose it to allow external access to its administration console, as follows:
 
 	oc new-app grafana
 	oc expose service grafana
 
-The new *Grafana* pod should then be visible in the *OpenShift* console.
+The new [*Grafana*](https://grafana.com/) pod should then be visible in the [*Red Hat OpenShift*](https://www.openshift.com/) console.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/os-grafana.png)
 
@@ -668,7 +668,7 @@ and define the name, type of data source and URL (default port is 9090) as shown
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-edit-data-source.png){:width="60%"}
 
-then click 'Add' and *Grafana* will attempt to connect. If no trouble arises it will display 'success' in green color. We should now have *Grafana* linked to *Prometheus*. Create a new dashboard where to layout rendering panels for the metrics.
+then click 'Add' and [*Grafana*](https://grafana.com/) will attempt to connect. If no trouble arises it will display 'success' in green color. We should now have [*Grafana*](https://grafana.com/) linked to [*Prometheus*](https://prometheus.io/). Create a new dashboard where to layout rendering panels for the metrics.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-dashboard-new.png){:width="60%"}
 
@@ -678,7 +678,7 @@ Quick recap, we counted three metric layers we're interest in (picture below) an
 
 
 
-Starting from the bottom layer (JVM), let's display its memory usage. Drag and drop a Graph in the empty space, click on the 'Panel Title' and select 'edit'. In the 'metrics' tab you'll find a 'Panel Data Source' selection box, choose 'prom' (our defined data source). Now, we can choose the metric to display from the 'Metric lookup' selection box. *Grafana* auto-populates the metrics list from querying *Prometheus*, it will include all of them, found by the scraping process, in alphabetical order.
+Starting from the bottom layer (JVM), let's display its memory usage. Drag and drop a Graph in the empty space, click on the 'Panel Title' and select 'edit'. In the 'metrics' tab you'll find a 'Panel Data Source' selection box, choose 'prom' (our defined data source). Now, we can choose the metric to display from the 'Metric lookup' selection box. [*Grafana*](https://grafana.com/) auto-populates the metrics list from querying [*Prometheus*](https://prometheus.io/), it will include all of them, found by the scraping process, in alphabetical order.
 
 Select from the list '**`jvm_memory_bytes_used`**' and change the time range at the top right corner to 15mn for example.
 
@@ -694,16 +694,16 @@ For the top layer (Business), create another Graph panel, and pick '**`os_RHEL`*
 
 <!-- ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-metric-os.png){:width="100%"} -->
 
-You'll notice four curves are being displayed corresponding to the 2 selected metrics from the 2 pods running. You will also notice RHEL is the most popular out of the 2, this makes sense since we made our client to send RHEL requests with higher probability than the other flavours. Also, you'll realise *Prometheus* automatically defined labels to identify where the metrics are coming from.
+You'll notice four curves are being displayed corresponding to the 2 selected metrics from the 2 pods running. You will also notice RHEL is the most popular out of the 2, this makes sense since we made our client to send RHEL requests with higher probability than the other flavours. Also, you'll realise [*Prometheus*](https://prometheus.io/) automatically defined labels to identify where the metrics are coming from.
 
-Let's introduce some data aggregation rules to play a bit with the power of *Grafana*. The Pie Chart plugin will give us a better sense of the distribution of operating systems being provisioned. The origin of the data no longer matters, the same metrics from the different pods are added up, whether 2 or 10 pods are running. Create a new Pie Chart panel and define the following 4 queries using the **`sum()`** function, and customise the metric labels using the input field '**Legend format**'.
+Let's introduce some data aggregation rules to play a bit with the power of [*Grafana*](https://grafana.com/). The Pie Chart plugin will give us a better sense of the distribution of operating systems being provisioned. The origin of the data no longer matters, the same metrics from the different pods are added up, whether 2 or 10 pods are running. Create a new Pie Chart panel and define the following 4 queries using the **`sum()`** function, and customise the metric labels using the input field '**Legend format**'.
 
 ![Grafana Pie Chart]({{ site.baseurl }}/assets/img/posts/graf-pie-chart-metrics.png){:width="40%"}
 ![Grafana Pie Chart]({{ site.baseurl }}/assets/img/posts/graf-pie-chart-graph.png){:width="40%"}
 
 The above chart shows RHEL is the most popular OS, followed by Windows, then CentOS and Ubuntu.
 
-The illustration below summarises all the work done above, showing the three metric layers of the application (JVM/Camel/Business) and a full construct in *Grafana* side by side:
+The illustration below summarises all the work done above, showing the three metric layers of the application (JVM/Camel/Business) and a full construct in [*Grafana*](https://grafana.com/) side by side:
 
 ![Layers summary]({{ site.baseurl }}/assets/img/posts/metrics-layers-grafana-2.png)
 
@@ -711,7 +711,7 @@ The illustration below summarises all the work done above, showing the three met
 
 ### Scaling down
 
-We can play around a bit more and see what happens if we scale down the *Camel* application from 2 pods to 1. Doing so should cause some of the curves stop growing, and eventually discontinued as the target is no longer available. It would look like the picture below:
+We can play around a bit more and see what happens if we scale down the [*Camel*](http://camel.apache.org/) application from 2 pods to 1. Doing so should cause some of the curves stop growing, and eventually discontinued as the target is no longer available. It would look like the picture below:
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-metric-os-scale-down.png){:width="100%"}
 
@@ -721,9 +721,12 @@ We can play around a bit more and see what happens if we scale down the *Camel* 
 
 This whole exercise was about taking advantage of a container based environment and showing how to put in place a monitoring strategy capable of self-adjusting when the application landscape is constantly re-shaping.
 
-The article was *Camel* centric, but I'm sure you can foresee how this goes beyond the world of *Camel*. Any application running in a Pod could perfectly be incorporated and fall into *Prometheus*'s radar.
+The article was [*Camel*](http://camel.apache.org/) centric, but I'm sure you can foresee how this goes beyond the world of [*Camel*](http://camel.apache.org/). Any application running in a Pod could perfectly be incorporated and fall into [*Prometheus*](https://prometheus.io/)'s radar.
 
 I'm well aware the article got quiet long, if you're still reading here I'm going to assume it got you sufficiently interested and that's a good sign! Thanks for reading !
+
+Find in my GitHub account all the source code and definitions from this article:
+[https://github.com/brunoNetId/example-camel-prometheus-grafana-openshift](https://github.com/brunoNetId/example-camel-prometheus-grafana-openshift)
 
 
 
