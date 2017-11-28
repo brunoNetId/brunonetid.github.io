@@ -23,30 +23,30 @@ This walk-through example will encourage you to build an [*Apache Camel*](http:/
 
 ## Introduction
 
-[*Apache Camel*](http://camel.apache.org/) tends to be a favorite choice when it comes to implement a mesh of coordinated applications resolving protocol/data mediations and service orchestrations. Instead of a complex monolithic solution, the preference is to deploy a number of smaller and simpler applications, it favors overall maintenance despite the increase in number of systems to observe.
+[*Apache Camel*](http://camel.apache.org/) tends to be a favorite choice when it comes to implementing a mesh of coordinated applications resolving protocol/data mediations and service orchestrations. Instead of a complex monolithic solution, deploying a number of smaller and simpler applications is preferable as it favours overall maintenance despite there being an increase in number of systems to control.
 
 ![Camel Mesh]({{ site.baseurl }}/assets/img/posts/arch-mesh.png)
 
-Monitoring is crucial when it comes to know what the state of the platform is. Tracking the system's health tends to be a priority to ensure business-as-usual activity carries on with normality. In addition to basic health metrics, such as CPU and memory usage, it also might be interesting to watch some other extracted indicators considered key to the organisation.
+Monitoring is crucial when it comes to knowing the state of the platform. Tracking the system's health tends to be a priority to ensure that business-as-usual activity carries on with normality. In addition to basic health metrics, such as CPU and memory usage, it might also be interesting to watch some other higher level indicators relevant to the organisation (more business related).
 
-Conservative administrators would love a world where nothing changes, we can understand that, their life would be so much simpler, and focus on some other important matters. And that's precisely what container based environments aim to do, liberate people from tedious tasks by introducing smart automation strategies and standardisation.
+Conservative administrators would love a world where nothing changes, we can understand that, their work would be a lot easier and focused on some other important matters. And that's precisely what container based environments aim to do, liberate people from tedious tasks by introducing smart automation strategies and standardisation.
 
-With traditional monitoring products, machines and VMs are assigned to run applications, and all artifacts would be well registered in a resources catalog from which one could introspect and obtain the relevant monitoring information. However the traditional approach does not work on very dynamic and changing environments where containers (running the apps.) are created and destroyed all the time, as bubbles appearing and popping.
+With traditional monitoring products, machines and VMs are assigned to run applications, and all artifacts would be well registered in a resources catalog from which one could examine and obtain the relevant monitoring information. However, the traditional approach does not work on very dynamic and changing environments where containers (running the apps.) are created and destroyed all the time, as bubbles appearing and popping.
 
 ![Ephemeral instances]({{ site.baseurl }}/assets/img/posts/bubbles.png)
 
-Of course, by running dynamic environments we gain agility that allows easy scaling, provides elasticity, but then keeping track of what runs where becomes challenging. Here we discuss how [*Prometheus*](https://prometheus.io/) and [*Grafana*](https://grafana.com/) can help you monitor your [*Camel*](http://camel.apache.org/) applications running in a container based based environment ([*Kubernetes*](https://kubernetes.io/)).
+Evidently, by running dynamic environments we gain agility that allows easy scaling, provides elasticity, but then keeping track of what runs where becomes challenging. Here we discuss how [*Prometheus*](https://prometheus.io/) and [*Grafana*](https://grafana.com/) can help you monitor your [*Camel*](http://camel.apache.org/) applications running in a container based based environment ([*Kubernetes*](https://kubernetes.io/)).
 
 ## About Prometheus
 
-[*Prometheus*](https://prometheus.io/) is an open source monitoring and alerting toolkit which collects and stores time series data. Conveniently it understands [*Kubernetes*](https://kubernetes.io/)'s API to discover services. The collected data can be intelligently organised and rendered using [*Grafana*](https://grafana.com/), an open analytics and monitoring platform that can plug to Prometheus.
+[*Prometheus*](https://prometheus.io/) is an open source monitoring and alerting toolkit which collects and stores time series data. Conveniently it understands [*Kubernetes*](https://kubernetes.io/)'s API to discover services. The collected data can be intelligently organised and rendered using [*Grafana*](https://grafana.com/), an open analytics and monitoring platform that can plug into Prometheus.
 The following diagram depicts a simplified view of its architecture.
 
 ![Prometheus Architecture]({{ site.baseurl }}/assets/img/posts/prom-arch.png)
 
 [*Prometheus*](https://prometheus.io/) prime strategy is to pull metrics from applications (although 'push' is also supported). Connectivity to endpoints can be statically configured or dynamically discovered. Data obtained from endpoints is stored so that historical information can be served to external clients, including monitoring tools such as [*Grafana*](https://grafana.com/). Alerting is supported, although left out of scope in this article.
 
-In a [*Kubernetes*](https://kubernetes.io/) environment, track of available services is always maintained. Services could be served by one or multiple replicated instances, scaled up or down when necessary. Before [*Prometheus*](https://prometheus.io/) can pull data from the instances it needs to find where they are running. One of its supported service discovery mechanisms is [*Kubernetes*](https://kubernetes.io/)'s based, and by invoking its API it can pull all the details from [*Kubernetes*](https://kubernetes.io/) and locate the targets to work with.
+In a [*Kubernetes*](https://kubernetes.io/) environment, track of available services is always maintained. Services could be served by one or multiple replicated instances, scaled up or down when necessary. Before [*Prometheus*](https://prometheus.io/) can pull data from the instances, it needs to find where they are running. One of its supported service discovery mechanisms is [*Kubernetes*](https://kubernetes.io/) based, and by invoking its API it can pull all the details from [*Kubernetes*](https://kubernetes.io/) and locate the targets to work with.
 
 ![Prometheus Architecture]({{ site.baseurl }}/assets/img/posts/prom-arch-full.png)
 
@@ -74,7 +74,7 @@ To model the [*Camel*](http://camel.apache.org/) application (and for convenienc
 
 ## Scraping data
 
-It hasn't been mentioned yet how desirable it is to find a metrics extraction that minimises intrusion. [*Prometheus*](https://prometheus.io/) offers a JMX exporter to plug to any Java application (and hence to Camel). The performance impact on the application is negligible (nano-seconds), unless of course latency is considered a critical factor.
+It hasn't been mentioned yet how desirable it is to find a metrics extraction that minimises intrusion. [*Prometheus*](https://prometheus.io/) offers a JMX exporter to plug into any Java application (and hence to Camel). The performance impact on the application is negligible (nano-seconds), unless of course latency is considered a critical factor.
 
 > [*Prometheus*](https://prometheus.io/) offers a wide [range of exporters](https://prometheus.io/docs/instrumenting/exporters/#third-party-exporters), from hardware related ones, to databases and many more in between.
 
@@ -82,12 +82,12 @@ It hasn't been mentioned yet how desirable it is to find a metrics extraction th
 
 The JMX exporter ensures no adapted development is necessary. The only obvious exception is when needed to obtain business specific information out of the transaction's payload.
 
-The process of collecting metrics, in Prometheus's jargon, is *'scraping'*. The following picture depicts how the JMX exporter would sit along the JVM (as a Java agent) to expose metrics to Prometheus.
+The process of collecting metrics, in Prometheus jargon, is called *'scraping'*. The following picture depicts how the JMX exporter would sit along the JVM (as a Java agent) to expose metrics to [*Prometheus*](https://prometheus.io/).
 
 ![Prometheus JMX Exporter]({{ site.baseurl }}/assets/img/posts/prom-jmx-scraping.png){:width="80%"}
 
 quick note:
-Out of curiosity, [*Prometheus*](https://prometheus.io/) will also help you obtaining metrics from hardware, network devices and other elements, it's open and not restricted to software only.
+Out of curiosity, [*Prometheus*](https://prometheus.io/) will also help you to obtain metrics from hardware, network devices and other elements, it's open and not restricted to software only.
 
 The [*Camel*](http://camel.apache.org/) example to follow includes 3 layers (JVM, Camel, Business) of metrics to be scraped to illustrate typical information that be may relevant when monitoring. JVM and [*Camel*](http://camel.apache.org/) metrics are available out-of-the-box, MBeans are already present to serve the information. Optionally we can extract business KPIs, thankfully [*Camel*](http://camel.apache.org/) provides functionality to help in this matter, the `'camel-metrics'` component, shown later down the article.
 
@@ -100,7 +100,7 @@ Now that we know the principle of '*scraping*' and what parts are involved, we'r
 
 ## The application
 
-For demo purposes, we'll pretend the system exposes an API to provision VMs. A [*Camel*](http://camel.apache.org/) micro-service will handle API calls where the required operating system, number of CPU cores, memory and storage are given to be provisioned.
+For demo purposes, we'll pretend that the system exposes an API to provision VMs. A [*Camel*](http://camel.apache.org/) micro-service will handle API calls where the required operating system, number of CPU cores, memory and storage are given to be provisioned.
 
 ![Camel Application]({{ site.baseurl }}/assets/img/posts/camel-app.png){:width="80%"}
 
@@ -210,7 +210,7 @@ Replace the main [*Camel*](http://camel.apache.org/) route with the one below ex
     <setBody><constant>success</constant></setBody>
 </route>
 ```
-The above route listens for VM requests, extracts from the payload the OS value using XPath, and crucially passes it to the `metrics` component as a counter, which automatically increments by 1 for each OS that comes in.
+The above route listens to VM requests, extracts from the payload the OS value using XPath, and crucially passes it to the `metrics` component as a counter, which automatically increments by 1 for each OS that comes in.
 
 ...as for the provisioning of the virtual machine, well... just imagine it happens!
 
@@ -241,7 +241,7 @@ Let's check the implementation works as expected. Build with maven and run local
 	mvn clean package
 	java -jar target/api-vm-provider-1.0.0.jar
 
-You should see the *Spring Boot* application's output showing OS's being provisioned:
+You should see the *Spring Boot* application's output showing OSs being provisioned:
 
 
 ```shell
@@ -252,7 +252,7 @@ You should see the *Spring Boot* application's output showing OS's being provisi
 ```
 
 You can also check the metric bean is available visualising the MBeans with JConsole.
-Run `'jconsole'` and connect the local process. Display the MBeans and you should find the group '`fis.metrics`':
+Run `'jconsole'` and connect to the local process. Display the MBeans and you should find the group '`fis.metrics`':
 
 <a name="img-mbeans"/>
 ![JConsole MBeans]({{ site.baseurl }}/assets/img/posts/jconsole-mbeans.png){:width="50%"}
@@ -412,7 +412,7 @@ spec:
 
 ### Deploying in OpenShift's CDK
 
-Now the [*Camel*](http://camel.apache.org/) application is ready to be containerised and deployed in OpenShift. [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration) will do all of it automatically for you in a single command. The directives to bundle together the application and exporter have already been defined. [*Fabric8*](https://fabric8.io/) (in [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration)) will build a [*Docker*](https://www.docker.com/) image and include *OpenShift* resource descriptors. The graph below illustrates how the pieces are put together, streamed, and deployed in the target environment.
+Now the [*Camel*](http://camel.apache.org/) application is ready to be containerised and deployed in OpenShift. [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration) will do all of it automatically for you in a single command. The directives to bundle together the application and exporter have already been defined. [*Fabric8*](https://fabric8.io/) (in [*FIS*](https://www.openshift.com/container-platform/middleware-services.html#integration)) will build a [*Docker*](https://www.docker.com/) image and include *OpenShift* resource descriptors. The graph below illustrates how the pieces are put together, streamed and deployed in the target environment.
 
 ![JConsole MBeans]({{ site.baseurl }}/assets/img/posts/exporter-deploy.png)
 
@@ -483,7 +483,7 @@ scrape_configs:
       regex: prometheus
 ```
 
-We're keeping a very simple configuration file for this demo. Obviously Prometheus's list of parameters is very extensive to customise accordingly. The above settings aim to:
+We're keeping a very simple configuration file for this demo, but [*Prometheus*](https://prometheus.io/) offers a rich palette of parameters allowing to cover most needs. The above settings aim to:
 
  - increase the scraping frequency to trigger every 15 seconds
  - enable [*Kubernetes*](https://kubernetes.io/) endpoints discovery
@@ -493,7 +493,7 @@ The [*Kubernetes*](https://kubernetes.io/) discovery setting will allow [*Promet
 
 ![Openshift scraping]({{ site.baseurl }}/assets/img/posts/prom-scrape-os.png){:width="80%"}
 
-To initiate the deployment process in [*Red Hat OpenShift*](https://www.openshift.com/), first we need to grant cluster permissions on the namespace to allow [*Prometheus*](https://prometheus.io/) to invoke [*Kubernetes*](https://kubernetes.io/)'s API (when obtaining the endpoints). Execute the following commands to login as an admin and grant cluster permissions:
+To initiate the deployment process in [*Red Hat OpenShift*](https://www.openshift.com/), first we need to grant cluster permissions on the namespace to allow [*Prometheus*](https://prometheus.io/) to invoke [*Kubernetes*](https://kubernetes.io/) API (when obtaining the endpoints). Execute the following commands to login as an admin and grant cluster permissions:
 
 	oc login
 	oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:mydemo:default
@@ -512,7 +512,7 @@ The new [*Prometheus*](https://prometheus.io/) pod should then be visible in the
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/os-prometheus.png)
 
-Open *Prometheus*'s administration console from the URL given (see URL in image above). Then from the 'Status' menu select 'Targets'. 
+Open *Prometheus* administration console from the URL given (see URL in image above). Then from the 'Status' menu select 'Targets'. 
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/prom-console-menu.png){:width="70%"}
 
@@ -524,7 +524,7 @@ We could therefore represent the current deployment picture as follows:
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/monitor-pods-1.png){:width="65%"}
 
-Let's now scale up the application to simulate more demand, this is the big moment we were waiting for to see how our monitoring solution automatically reacts to changes in the environment.
+Let's now scale up the application to simulate we respond to more demand. This is the big moment we were waiting for to see how our monitoring solution automatically reacts to changes in the environment.
 
 When scaling up from the Pod control in [*Red Hat OpenShift*](https://www.openshift.com/), [*Kubernetes*](https://kubernetes.io/) will kickoff a new pod. Shortly after, [*Prometheus*](https://prometheus.io/) will query again [*Kubernetes*](https://kubernetes.io/) and will discover there's a new endpoint available, it will automatically pick it up and now will be scraping data from both pods. The following illustration should describe the new environment status when increasing the number of pods from 1 to 2.
 
@@ -536,18 +536,18 @@ Refresh the targets list to see the new endpoint is visible.
 ![Prometheus targets 2]({{ site.baseurl }}/assets/img/posts/prom-console-targets-2.png)
 
 
-Note Prometheus's administration console includes a graph viewer useful for simple testing, but not rich enough for instance to display complex aggregated views. If you will, have a go and play around a bit, but we'll jump now straight to the following section, It's [*Grafana*](https://grafana.com/) time!
+Note [*Prometheus*](https://prometheus.io/) administration console includes a graph viewer useful for simple testing, but not rich enough for instance to display complex aggregated views. If you will, have a go and play around a bit, but we'll jump now straight to the following section, It's [*Grafana*](https://grafana.com/) time!
 
 
 ## Enabling *Grafana*
 
-[*Grafana*](https://grafana.com/) is an open platform for analytics and monitoring capable of rendering very intuitive and interactive graphics out of multiple data sources, one of them being Prometheus. Our intention is therefore to plug [*Grafana*](https://grafana.com/) to [*Prometheus*](https://prometheus.io/) to display our [*Camel*](http://camel.apache.org/) application metrics. 
+[*Grafana*](https://grafana.com/) is an open platform for analytics and monitoring capable of rendering very intuitive and interactive graphics out of multiple data sources, one of them being Prometheus. Our intention is therefore to plug [*Grafana*](https://grafana.com/) into [*Prometheus*](https://prometheus.io/) to display our [*Camel*](http://camel.apache.org/) application metrics. 
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-arch.png){:width="100%"}
 
 To deploy an instance of [*Grafana*](https://grafana.com/) in [*Red Hat OpenShift*](https://www.openshift.com/) I've taken as a base the demo prepared by the *OpenShift* team available (available [here](https://github.com/OpenShiftDemos/grafana-openshift)).
 
-I've customised the example by updating to the latest [*Grafana*](https://grafana.com/) version (4.4.1) and including a [Grafana plugin to render pie charts](https://grafana.com/plugins/grafana-piechart-panel) (not included by default). Download the plugin from [*Grafana*](https://grafana.com/)'s [download link](https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.1.6/download) and unzip the contents in your local grafana working directoy (assuming you've created one), or alternatively use the commands below:
+I've customised the example by updating to the latest [*Grafana*](https://grafana.com/) version (4.4.1) and including a [Grafana plugin to render pie charts](https://grafana.com/plugins/grafana-piechart-panel) (not included by default). Download the plugin from [*Grafana*](https://grafana.com/)'s [download link](https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.1.6/download) and unzip the contents in your local grafana working directory (assuming you've created one), or alternatively use the commands below:
 
 	mkdir grafana
 	cd grafana
@@ -660,7 +660,7 @@ Open *Grafana*'s web console from the URL given (see URL in image above), and lo
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-pie-chart-installed.png)
 
-First thing to do is to configure connectivity with Prometheus's data source. Click on 'Add data source'.
+First thing to do is to configure connectivity with [*Prometheus*](https://prometheus.io/) data source. Click on 'Add data source'.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-add-data-source.png){:width="40%"}
 
@@ -668,11 +668,11 @@ and define the name, type of data source and URL (default port is 9090) as shown
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-edit-data-source.png){:width="60%"}
 
-then click 'Add' and [*Grafana*](https://grafana.com/) will attempt to connect. If no trouble arises it will display 'success' in green color. We should now have [*Grafana*](https://grafana.com/) linked to [*Prometheus*](https://prometheus.io/). Create a new dashboard where to layout rendering panels for the metrics.
+then click 'Add' and [*Grafana*](https://grafana.com/) will attempt to connect. If no trouble arises, it will display 'success' in green color. We should now have [*Grafana*](https://grafana.com/) linked to [*Prometheus*](https://prometheus.io/). Create a new dashboard where to layout rendering panels for the metrics.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-dashboard-new.png){:width="60%"}
 
-Quick recap, we counted three metric layers we're interest in (picture below) and would like to render their data for analysis. Let's create an example graph for each layer.
+Quick recap, we counted three metric layers we're interested in (picture below) and would like to render their data for analysis. Let's create an example graph for each layer.
 
 ![Metric layers]({{ site.baseurl }}/assets/img/posts/metrics-layers.png){:width="80%"}
 
@@ -680,7 +680,7 @@ Quick recap, we counted three metric layers we're interest in (picture below) an
 
 Starting from the bottom layer (JVM), let's display its memory usage. Drag and drop a Graph in the empty space, click on the 'Panel Title' and select 'edit'. In the 'metrics' tab you'll find a 'Panel Data Source' selection box, choose 'prom' (our defined data source). Now, we can choose the metric to display from the 'Metric lookup' selection box. [*Grafana*](https://grafana.com/) auto-populates the metrics list from querying [*Prometheus*](https://prometheus.io/), it will include all of them, found by the scraping process, in alphabetical order.
 
-Select from the list '**`jvm_memory_bytes_used`**' and change the time range at the top right corner to 15mn for example.
+Select from the list '**`jvm_memory_bytes_used`**' and change the time range at the top right corner to 15min for example.
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-metric-memory.png){:width="100%"}
 
@@ -711,7 +711,7 @@ The illustration below summarises all the work done above, showing the three met
 
 ### Scaling down
 
-We can play around a bit more and see what happens if we scale down the [*Camel*](http://camel.apache.org/) application from 2 pods to 1. Doing so should cause some of the curves stop growing, and eventually discontinued as the target is no longer available. It would look like the picture below:
+We can play around a bit more and see what happens if we scale down the [*Camel*](http://camel.apache.org/) application from 2 pods to 1. Doing so should cause some of the curves to stop growing, and eventually discontinue as the target is no longer available. It would look like the picture below:
 
 ![Prometheus Pod]({{ site.baseurl }}/assets/img/posts/graf-metric-os-scale-down.png){:width="100%"}
 
@@ -721,9 +721,9 @@ We can play around a bit more and see what happens if we scale down the [*Camel*
 
 This whole exercise was about taking advantage of a container based environment and showing how to put in place a monitoring strategy capable of self-adjusting when the application landscape is constantly re-shaping.
 
-The article was [*Camel*](http://camel.apache.org/) centric, but I'm sure you can foresee how this goes beyond the world of [*Camel*](http://camel.apache.org/). Any application running in a Pod could perfectly be incorporated and fall into [*Prometheus*](https://prometheus.io/)'s radar.
+The article was [*Camel*](http://camel.apache.org/) centric, but I'm sure you can foresee how this goes beyond the world of [*Camel*](http://camel.apache.org/). Any application running in a Pod could perfectly be incorporated and fall into [*Prometheus*](https://prometheus.io/) radar.
 
-I'm well aware the article got quiet long, if you're still reading here I'm going to assume it got you sufficiently interested and that's a good sign! Thanks for reading !
+I'm well aware the article got quite long, if you're still reading here I'm going to assume it got you sufficiently interested and that's a good sign! Thanks for reading !
 
 Find in my GitHub account all the source code and definitions from this article:
 [https://github.com/brunoNetId/example-camel-prometheus-grafana-openshift](https://github.com/brunoNetId/example-camel-prometheus-grafana-openshift)
