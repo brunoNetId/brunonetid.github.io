@@ -3,6 +3,17 @@ layout: post
 title: Monitoring Camel with Prometheus in Red Hat OpenShift
 feature-img: "assets/img/pexels/monitoring-camel-blured2.jpeg"
 tags: [Camel, FIS, Fuse, Fabric8, Prometheus, Grafana, Kubernetes, OpenShift, Docker]
+table-of-contents:
+  <ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#about-prometheus">About Prometheus</a></li>
+    <li><a href="#to-do-overview">To-Do overview</a></li>
+    <li><a href="#scraping-data">Scraping data</a></li>
+    <li><a href="#the-application">The application</a></li>
+    <li><a href="#enabling-prometheus">Enabling Prometheus</a></li>
+    <li><a href="#enabling-grafana">Enabling Grafana</a></li>
+    <li><a href="#final-words">Final words</a></li>
+  </ol> 
 ---
 
 
@@ -11,14 +22,15 @@ This walk-through example will encourage you to build an [*Apache Camel*](http:/
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
+{{page.table-of-contents}}
+<!-- 1. [Introduction](#introduction)
 2. [About Prometheus](#about-prometheus)
 2. [To-Do overview](#to-do-overview)
 2. [Scraping data](#scraping-data)
 2. [The application](#the-application)
 3. [Enabling Prometheus](#enabling-prometheus)
 3. [Enabling Grafana](#enabling-grafana)
-3. [Final words](#final-words)
+3. [Final words](#final-words) -->
 
 
 ## Introduction
