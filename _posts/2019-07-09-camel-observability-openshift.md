@@ -745,7 +745,7 @@ We can use the trace-id to open the Tracing visualisation of the integration flo
 
     https://{url-jaeger-ui}/trace/5dc43137830aa90a
 
-where `{url-jaever-ui}` is the address of the UI console, and which gives us the following rendering:
+where `{url-jaeger-ui}` is the address of the UI console, and which gives us the following rendering:
 
 ![]({{ site.baseurl }}/assets/img/posts/observability/kibana-issue-02.png)
 
