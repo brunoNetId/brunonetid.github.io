@@ -277,12 +277,12 @@ Or, simply run the example with *Camel JBang* using the [random-users.xml] avail
 
 Then run with:
 ```bash
-camel run github:brunoNetId:example-camel-designer:random-users.xml
+camel run https://github.com/brunoNetId/example-camel-designer/random-users.xml
 ```
 
 or if running with JBang directly:
 ```bash
-jbang camel@apache/camel run github:brunoNetId:example-camel-designer:random-users.xml
+jbang camel@apache/camel run https://github.com/brunoNetId/example-camel-designer/random-users.xml
 ```
 
 Press [<kbd>ctrl</kbd>]+[<kbd>c</kbd>] to stop it.  
