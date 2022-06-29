@@ -15,7 +15,7 @@ theme_settings:
   # Header and footer text
   header_text: >
      <h1 class="title">Bruno Meseguer</h1>
-     <p style="position: relative; top: -50px;">Specialist Solution Architect @ Red Hat</p>
+     <p style="position: relative; top: -50px;">Technical Marketing Manager @ Red Hat</p>
      <h4>Technical articles out of learning and experimenting<br>with middleware software</h4>
   # header_text_feature_image: assets/img/pexels/bulbs2.jpeg
   header_text_feature_image: assets/img/pexels/bulbs5-small.jpeg

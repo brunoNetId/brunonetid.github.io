@@ -2,7 +2,7 @@
 layout: post
 title: Apache Camel Visual Designer
 feature-img: "assets/img/posts/designer-intro/intro.gif"
-tags: [Camel, Apache Camel, VSCode, Visual Studio Code]
+tags: [Camel, Apache Camel, Camel Designer, VSCode, Visual Studio Code]
 table-of-contents: 
   <ol>
     <li><a href="#introduction">Introduction</a></li>
