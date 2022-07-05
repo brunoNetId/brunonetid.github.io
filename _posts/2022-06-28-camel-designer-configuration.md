@@ -288,6 +288,9 @@ jbang camel@apache/camel run https://github.com/brunoNetId/example-camel-designe
 Press [<kbd>ctrl</kbd>]+[<kbd>c</kbd>] to stop it.  
 You should see a new folder [`directory`] where Camel has stored `user` information.
 
+---
+
+> **Demo:** You can find a short video demonstration of the example above in the following blog entry of *Apache Camel*'s website: [*Camel Designer*'s new mapping system](https://camel.apache.org/blog/2022/07/camel-designer-jbang/)
 
 <br>
 
@@ -311,6 +314,9 @@ Find how to get started with *Camel JBang*<br>
 [https://camel.apache.org/manual/camel-jbang.html](https://camel.apache.org/manual/camel-jbang.html)
 
 Learn more about *JBang*<br>[https://www.jbang.dev](https://www.jbang.dev)
+
+Watch a short demo showing *Camel Designer* and *Camel JBang* in action heading to:
+[https://camel.apache.org/blog/2022/07/camel-designer-jbang](https://camel.apache.org/blog/2022/07/camel-designer-jbang/)
 
 Learn how *Camel Designer* integrates with *AtlasMap*<br>[https://camel.apache.org/blog/2022/04/camel-designer-atlasmap/](https://camel.apache.org/blog/2022/04/camel-designer-atlasmap/)
 
